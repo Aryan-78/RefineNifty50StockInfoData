@@ -1,3 +1,4 @@
+from pathlib import Path
 import sqlite3
 import os
 import pandas as pd
@@ -5,7 +6,10 @@ import sys
 import os
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-from helper.helper import csv_root_path, mainDB
+from helper.helper import csv_root_path, get_logging, mainDB
+
+logger = get_logging(Path(__file__).stem)
+
 
 def add_all_nifty50_data():
     conn = sqlite3.connect(mainDB)
@@ -26,4 +30,5 @@ def add_all_nifty50_data():
 
 
 if __name__ == "__main__":
+    logger.info("Populating nifty50 table into the database...")
     add_all_nifty50_data()

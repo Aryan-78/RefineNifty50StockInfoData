@@ -2,9 +2,13 @@ import sqlite3
 import sys
 import os
 
+from pathlib import Path
+
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from createCsvToData.addIndividualEquityInDatabase import get_all_symbols
-from helper.helper import mainDB
+from helper.helper import get_logging, mainDB
+
+logger = get_logging(Path(__file__).stem)
 
 # This script is responsible for populating the 'Result' column in the database for each stock symbol.
 def populate_result_to_database(symbol):
@@ -23,7 +27,7 @@ def populate_result_to_database(symbol):
     
     # If there are less than 10 records, we cannot determine the result, so we will skip that symbol.
     if len(records) < 10:
-        print(f"Not enough records for {symbol} to determine the result. Skipping.")
+        logger.info(f"Not enough records for {symbol} to determine the result. Skipping.")
         conn.close()
         return
 
@@ -45,10 +49,11 @@ def populate_result_to_database(symbol):
         initial_stock_order = final_stock_order + 1
         final_stock_order += 9
     conn.commit()
-    print(f"Result column populated for {symbol}.")
+    logger.info(f"Result column populated for {symbol}.")
     conn.close()
 
 if __name__ == "__main__":
+    logger.info("Starting to populate 'Result' column in the database...")
     symbols = get_all_symbols()
     for symbol in symbols:
         if symbol == 'M&M':

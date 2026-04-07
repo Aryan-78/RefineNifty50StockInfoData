@@ -1,3 +1,4 @@
+from pathlib import Path
 import sqlite3
 import os
 import pandas as pd
@@ -5,8 +6,9 @@ import sys
 import os
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-from helper.helper import csv_root_path, mainDB
+from helper.helper import csv_root_path, get_logging, mainDB
 
+logger = get_logging(Path(__file__).stem)
 
 def get_all_symbols():
     """Retrieve all stock symbols from the database."""
@@ -17,12 +19,19 @@ def get_all_symbols():
     symbols = cursor.fetchall()
     
     conn.close()
-    
+
+    logger.info(f"Retrieved {len(symbols)} symbols from the nifty50 table.")
+
     return [symbol[0] for symbol in symbols]
 
 def fetch_data_from_csv(csv_path):
     """Fetch stock data from a CSV file."""
-    df = pd.read_csv(csv_path)
+    try:
+        df = pd.read_csv(csv_path)
+        logger.info(f"Successfully read data from {csv_path}")
+    except Exception as e:
+        logger.error(f"Error reading {csv_path}: {e}")
+        df = pd.DataFrame()
     df = df.where(pd.notna(df), None)
     return df
 
@@ -30,7 +39,8 @@ def get_all_stock_data():
     """Get all stock data from CSV files, create tables, and insert data into stocks.db."""
     symbols = get_all_symbols()
     conn = sqlite3.connect(mainDB)
-    archive_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'archive')
+
+    logger.info("Starting to fetch all stock data...")
     
     for symbol in symbols:
         if symbol == 'M&M':
@@ -40,12 +50,13 @@ def get_all_stock_data():
             df = fetch_data_from_csv(csv_path)
             # Create table and insert data
             df.to_sql(symbol, conn, if_exists='replace', index=False)
-            print(f"Data for {symbol} inserted into table {symbol}.")
+            logger.info(f"Data for {symbol} inserted into table {symbol}.")
         else:
-            print(f"Warning: CSV file for {symbol} not found.")
+            logger.warning(f"CSV file for {symbol} not found.")
     
     conn.close()
 
 if __name__ == "__main__":
+    logger.info("Starting to get all stock data and insert into database...")
     get_all_stock_data()
     

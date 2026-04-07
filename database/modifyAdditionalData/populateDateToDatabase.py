@@ -2,10 +2,13 @@ import sqlite3
 import sys
 import os
 
+from pathlib import Path
+
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from createCsvToData.addIndividualEquityInDatabase import get_all_symbols
-from helper.helper import mainDB
+from helper.helper import get_logging, mainDB
 
+logger = get_logging(Path(__file__).stem)
 
 def add_day_data_to_table(symbol):
     """Add 'Day' column to a stock table and populate it with the day of the week."""
@@ -15,7 +18,7 @@ def add_day_data_to_table(symbol):
     # Check if the new table already exists
     cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{symbol}'")
     if cursor.fetchone() is None:
-        print(f"Table {symbol} does not exist. Skipping.")
+        logger.info(f"Table {symbol} does not exist. Skipping.")
         conn.close()
         return
 
@@ -35,14 +38,15 @@ def add_day_data_to_table(symbol):
         """
     try:
         cursor.execute(update_query)
-        print(f"'Day' column updated for table {symbol}.")
+        logger.info(f"'Day' column updated for table {symbol}.")
     except sqlite3.OperationalError as e:
-        print(f"Error updating table {symbol}: {e}")
+        logger.error(f"Error updating table {symbol}: {e}")
 
     conn.commit()
     conn.close()
 
 if __name__ == "__main__":
+    logger.info("Starting to add 'Day' data to tables...")
     symbols = get_all_symbols()
     for symbol in symbols:
         if symbol == 'M&M':

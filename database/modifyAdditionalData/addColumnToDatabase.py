@@ -1,16 +1,18 @@
+from pathlib import Path
 import sqlite3
 import sys
 import os
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from createCsvToData.addIndividualEquityInDatabase import get_all_symbols
-from helper.helper import mainDB
+from helper.helper import get_logging, mainDB
+
+logger = get_logging(Path(__file__).stem)
 
 def get_table_schema(table_name):
     """Get column information for a specified table."""
     cursor.execute(f"PRAGMA table_info('{table_name}')")
     columns_info = cursor.fetchall()
-    print(f"Existing columns in {table_name} table:")
     columns_info.append((len(columns_info), "Day", "TEXT", 0, None, 0))
     columns_info.append((len(columns_info), "Result", "TEXT", 0, None, 0))
     return columns_info
@@ -22,7 +24,7 @@ def create_new_table_with_symbol(symbol):
     # Check if the new table already exists
     cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{new_table_name}'")
     if cursor.fetchone() is not None:
-        print(f"Table {new_table_name} already exists. Skipping creation.")
+        logger.info(f"Table {new_table_name} already exists. Skipping creation.")
         return
     
     create_table_query = f"""
@@ -49,9 +51,9 @@ def create_new_table_with_symbol(symbol):
     """
     try:
         cursor.execute(create_table_query)
-        print(f"New table {new_table_name} created successfully.")
+        logger.info(f"New table {new_table_name} created successfully.")
     except sqlite3.OperationalError as e:
-        print(f"Error creating table {new_table_name}: {e}")
+        logger.error(f"Error creating table {new_table_name}: {e}")
 
 def populate_new_table_with_data(symbol):
     """Populate the new table with data from the original table."""
@@ -60,7 +62,7 @@ def populate_new_table_with_data(symbol):
     # if the new table is already populated then skip the population
     cursor.execute(f"SELECT COUNT(*) FROM '{new_table_name}'")
     if cursor.fetchone()[0] > 0:
-        print(f"Table {new_table_name} is already populated. Skipping population.")
+        logger.info(f"Table {new_table_name} is already populated. Skipping population.")
         return
 
     insert_query = f"""
@@ -71,9 +73,9 @@ def populate_new_table_with_data(symbol):
     try:
         cursor.execute(insert_query)
         conn.commit()
-        print(f"Data from {symbol} inserted into {new_table_name} successfully.")
+        logger.info(f"Data from {symbol} inserted into {new_table_name} successfully.")
     except sqlite3.OperationalError as e:
-        print(f"Error inserting data into {new_table_name}: {e}")
+        logger.error(f"Error inserting data into {new_table_name}: {e}")
 
 def delete_old_table(symbol):
     """Delete the old table after populating the new table."""
@@ -81,15 +83,15 @@ def delete_old_table(symbol):
     # Check if the old table exists before attempting to delete it
     cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{symbol}'")
     if cursor.fetchone() is None:
-        print(f"Table {symbol} does not exist. Skipping deletion.")
+        logger.info(f"Table {symbol} does not exist. Skipping deletion.")
         return
 
     delete_query = f'DROP TABLE IF EXISTS "{symbol}"'
     try:
         cursor.execute(delete_query)
-        print(f"Old table {symbol} deleted successfully.")
+        logger.info(f"Old table {symbol} deleted successfully.")
     except sqlite3.OperationalError as e:
-        print(f"Error deleting table {symbol}: {e}")
+        logger.error(f"Error deleting table {symbol}: {e}")
 
 def rename_new_table(symbol):
     """Rename the new table to the original table name."""
@@ -99,15 +101,15 @@ def rename_new_table(symbol):
     # Check if the new table exists before attempting to rename it
     cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{new_table_name}'")
     if cursor.fetchone() is None:
-        print(f"Table {new_table_name} does not exist. Skipping renaming.")
+        logger.info(f"Table {new_table_name} does not exist. Skipping renaming.")
         return
     
     rename_query = f'ALTER TABLE "{new_table_name}" RENAME TO "{symbol}"'
     try:
         cursor.execute(rename_query)
-        print(f"Table {new_table_name} renamed to {symbol} successfully.")
+        logger.info(f"Table {new_table_name} renamed to {symbol} successfully.")
     except sqlite3.OperationalError as e:
-        print(f"Error renaming table {new_table_name}: {e}")
+        logger.error(f"Error renaming table {new_table_name}: {e}")
 
 if __name__ == "__main__":
     # Get all symbols from the database
@@ -115,7 +117,7 @@ if __name__ == "__main__":
 
     # Create a new table for all symbols adding suffix '_new' to the table name and for MM create a new table with name MM_new and day column to it after date column using its schema
     for symbol in symbols:
-        print("Altering database to add new equity...")
+        logger.info("Altering database to add new equity...")
         conn = sqlite3.connect(mainDB)
         cursor = conn.cursor()
 

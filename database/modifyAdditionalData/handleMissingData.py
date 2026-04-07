@@ -1,3 +1,4 @@
+from pathlib import Path
 from sklearn.impute import KNNImputer
 import sqlite3  
 import sys
@@ -6,7 +7,10 @@ import pandas as pd
 import numpy as np
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from helper.helper import get_logging
 from createCsvToData.addIndividualEquityInDatabase import get_all_symbols
+
+logger = get_logging(Path(__file__).stem)       
 
 # Function to add missing data to tables using KNN imputation
 def add_missing_data_to_tables():
@@ -34,7 +38,7 @@ def add_missing_data_to_tables():
         if not data:
             continue
             
-        print(f"Processing table: {table_name} with {len(data)} rows")
+        logger.info(f"Processing table: {table_name} with {len(data)} rows")
         
         # Convert to pandas DataFrame
         df = pd.DataFrame(data, columns=column_names)
@@ -49,10 +53,10 @@ def add_missing_data_to_tables():
                 columns_with_missing.append((col, null_count))
         
         if not columns_with_missing:
-            print(f"No missing values found in {table_name}")
+            logger.info(f"No missing values found in {table_name}")
             continue
         
-        print(f"Found missing values in: {columns_with_missing}")
+        logger.info(f"Found missing values in: {columns_with_missing}")
         
         # Prepare data for KNN imputation
         # Convert to numeric types where possible
@@ -70,7 +74,7 @@ def add_missing_data_to_tables():
         numeric_cols = df_numeric.select_dtypes(include=[np.number]).columns.tolist()
         
         if not numeric_cols:
-            print(f"No numeric columns found in {table_name}")
+            logger.info(f"No numeric columns found in {table_name}")
             continue
         
         # Apply KNN imputation
@@ -93,7 +97,7 @@ def add_missing_data_to_tables():
                                         (float(new_value), idx + 1))
                         total_imputed += 1
         
-        print(f"Successfully imputed {total_imputed} missing values across {len(columns_with_missing)} columns")
+        logger.info(f"Successfully imputed {total_imputed} missing values across {len(columns_with_missing)} columns")
     
     conn.commit()
     conn.close()
@@ -109,19 +113,22 @@ def ignore_missing_data():
         cursor.execute(f'SELECT * FROM "{symbol}";')
         data = cursor.fetchall()
         if not data:
-            print(f"Warning: No data found for {symbol}.")
+            logger.warning(f"No data found for {symbol}.")
             continue
         
         df = pd.DataFrame(data, columns=[col[0] for col in cursor.description])
         df.dropna(inplace=True)
 
         df.to_sql(symbol, SqliteConnection, if_exists='replace', index=False)
-        print(f"Missing data for {symbol} has been ignored and the table has been updated.")
+        logger.info(f"Missing data for {symbol} has been ignored and the table has been updated.")
 
 
 if __name__ == "__main__":
+    logger.info("Script to handle missing data in the database has started.")
     a = input("This script will add missing data to the tables using KNN imputation. Enter Y to continue or N to ignore those ")
     if a.upper() == "Y":
+        logger.info("User chose to add missing data using KNN imputation. Starting the imputation process...")
         add_missing_data_to_tables()
     if a.upper() == "N":
+        logger.info("User chose to ignore missing data. Proceeding to remove rows with missing values.")
         ignore_missing_data()
