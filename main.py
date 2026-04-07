@@ -10,3 +10,4 @@ subprocess.run(["python", os.path.join("database", "createCsvToData", "addIndivi
 subprocess.run(["python", os.path.join("database", "modifyAdditionalData", "addColumnToDatabase.py")])
 subprocess.run(["python", os.path.join("database", "modifyAdditionalData", "populateResultToDatabase.py")])
 subprocess.run(["python", os.path.join("database", "modifyAdditionalData", "populateDateToDatabase.py")])
+subprocess.run(["python", os.path.join("database", "modifyAdditionalData", "handleMissingData.py")])
