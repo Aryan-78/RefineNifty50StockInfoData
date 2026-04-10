@@ -1,5 +1,16 @@
 import subprocess
 import os
+from database.helper.helper import mainDB, LOG_FILE
+
+# preCleanUp bring the folder into its initial state
+def preCleanUp():
+    if os.path.exists(mainDB):
+        os.remove(mainDB)
+    
+    if os.path.exists(LOG_FILE):
+        os.remove(LOG_FILE)
+
+preCleanUp()
 
 # Run script to add all nifty 50 companies to the database
 subprocess.run(["python", os.path.join("database", "createCsvToData", "createNifty50Table.py")])
