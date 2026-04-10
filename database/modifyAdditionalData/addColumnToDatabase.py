@@ -9,14 +9,6 @@ from helper.helper import get_logging, mainDB
 
 logger = get_logging(Path(__file__).stem)
 
-def get_table_schema(table_name):
-    """Get column information for a specified table."""
-    cursor.execute(f"PRAGMA table_info('{table_name}')")
-    columns_info = cursor.fetchall()
-    columns_info.append((len(columns_info), "Day", "TEXT", 0, None, 0))
-    columns_info.append((len(columns_info), "Result", "TEXT", 0, None, 0))
-    return columns_info
-
 def create_new_table_with_symbol(symbol):
     """Create a new table with the same schema as the original table and add a 'day' column."""
     new_table_name = f"{symbol}_new"
@@ -29,6 +21,7 @@ def create_new_table_with_symbol(symbol):
     
     create_table_query = f"""
         CREATE TABLE "{new_table_name}" (
+            "ID" INTEGER PRIMARY KEY AUTOINCREMENT,
             "Date" TEXT,
             "Day" TEXT,
             "Symbol" TEXT,
@@ -45,8 +38,7 @@ def create_new_table_with_symbol(symbol):
             "Trades" REAL,
             "Deliverable Volume" REAL,
             "%Deliverble" REAL,  
-            "Result" INTEGER,
-            PRIMARY KEY (date)
+            "Result" INTEGER
         );
     """
     try:
