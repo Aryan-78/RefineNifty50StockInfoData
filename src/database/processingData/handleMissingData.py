@@ -7,8 +7,9 @@ import pandas as pd
 import numpy as np
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from dataIngestion.addIndividualEquityInDatabase import get_all_symbols
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 from helper.helper import get_logging
-from createCsvToData.addIndividualEquityInDatabase import get_all_symbols
 
 logger = get_logging(Path(__file__).stem)       
 
