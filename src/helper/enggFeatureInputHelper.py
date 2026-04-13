@@ -151,7 +151,7 @@ def getTrueRangeSpike(dfPut,dfGet):
 ## 19. trades spike (number of trades / 10 day moving average of number of trades)
 ## 20. volume price trend (volume * 1 day return)
 
-def add_volume_trend(dfPut,dfGet):
+def addingVolumeTrend(dfPut,dfGet):
     Vol_MA5 = dfGet['Volume'].rolling(window=5).mean()
     Vol_MA20 = dfGet['Volume'].rolling(window=20).mean()
     
