@@ -59,7 +59,7 @@ def get3daySlopOf10MovingAverage(dfPut,dfGet):
 # add column of 5 day slop of 20 day moving average of close price to the dataframe
 def get5daySlopOf20MovingAverage(dfPut,dfGet):
     MA20 = dfGet['Close'].rolling(window=20).mean()
-    dfPut['MA20_slope_3'] = (MA20 - MA20.shift(5)) / 5
+    dfPut['MA20_slope_5'] = (MA20 - MA20.shift(5)) / 5
     return dfPut
 
 # add column of Moving Average ratio to the dataframe
