@@ -22,3 +22,6 @@ subprocess.run(["python", os.path.join("src", "database", "processingData", "add
 subprocess.run(["python", os.path.join("src", "database", "processingData", "populateResultToTable.py")])
 subprocess.run(["python", os.path.join("src", "database", "processingData", "populateDateToTable.py")])
 subprocess.run(["python", os.path.join("src", "database", "processingData", "handleMissingData.py")])
+
+# Run scripts to get Engineering data to the database
+subprocess.run(["python", os.path.join("src", "addFeature", "addFeatureDBAndColumn.py")])
