@@ -48,6 +48,9 @@ def get_all_stock_data():
         csv_path = os.path.join(csv_root_path(), f'{symbol}.csv')
         if os.path.exists(csv_path):
             df = fetch_data_from_csv(csv_path)
+            if df.empty:
+                logger.warning(f"No data found in CSV for {symbol}. Skipping.")
+                continue
             # Create table and insert data
             df.to_sql(symbol, conn, if_exists='replace', index=False)
             logger.info(f"Data for {symbol} inserted into table {symbol}.")

@@ -1,6 +1,7 @@
 import sqlite3
 import pandas as pd
 import sys
+from pathlib import Path
 import os
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
@@ -13,6 +14,9 @@ from helper.enggFeatureInputHelper import (
     getDeliveryRatio, getDeliverySpike,
     getGap, getClosePosition, getVWAPRatio
 )
+from helper.helper import mainDB, get_logging
+
+logger = get_logging(Path(__file__).stem)
 
 def get_data_From_old_table(cursor, symbol):
     """Fetch data from the old table."""
@@ -28,13 +32,13 @@ def get_data_From_old_table(cursor, symbol):
         cursor.execute(select_query)
         data = cursor.fetchall()
     except sqlite3.OperationalError as e:
-        print(f"Error fetching data from {symbol}: {e}")
+        logger.error(f"Error fetching data from {symbol}: {e}")
         return []
         
     if not data:
         return None
         
-    print(f"Processing table: {symbol} with {len(data)-24} rows")
+    logger.info(f"Processing table: {symbol} with {len(data)-24} rows")
     
     # Convert to pandas DataFrame
     df = pd.DataFrame(data, columns=column_names)
@@ -45,7 +49,7 @@ def superTableWithAllEnggFeatures(cursor, symbol, original_symbol=None):
     df = get_data_From_old_table(cursor, symbol)
     
     if df is None:
-        print(f"No data found for {symbol}. Skipping feature engineering.")
+        logger.info(f"No data found for {symbol}. Skipping feature engineering.")
         return
     
     # Calculate engineered features
@@ -138,15 +142,15 @@ def create_populate_new_table(symbol, cursor, df):
 
     try:
         cursor.execute(create_table_query)
-        print(f"New table {new_table_name} created successfully.")
+        logger.info(f"New table {new_table_name} created successfully.")
     except sqlite3.OperationalError as e:
-        print(f"Error creating table {new_table_name}: {e}")
+        logger.error(f"Error creating table {new_table_name}: {e}")
 
     df.to_sql(new_table_name, cursor.connection, if_exists="replace", index=False)    
 
 if __name__ == "__main__":
     # Connect to the database
-    conn = sqlite3.connect('stocks.db')
+    conn = sqlite3.connect(mainDB)
     cursor = conn.cursor()
     symbols = get_all_symbols()
     for symbol in symbols:
