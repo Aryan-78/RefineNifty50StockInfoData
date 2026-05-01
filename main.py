@@ -17,11 +17,12 @@ subprocess.run(["python", os.path.join("src", "database", "dataIngestion", "init
 subprocess.run(["python", os.path.join("src", "database", "dataIngestion", "populateNifty50Table.py")])
 subprocess.run(["python", os.path.join("src", "database", "dataIngestion", "addIndividualEquityInDatabase.py")])
 
-# Run scripts to modify the database and add additional data
+# Run scripts to modify the database and add additional data if needed
 subprocess.run(["python", os.path.join("src", "database", "processingData", "addDayAndResultColumn.py")])
 subprocess.run(["python", os.path.join("src", "database", "processingData", "populateResultToTable.py")])
 subprocess.run(["python", os.path.join("src", "database", "processingData", "populateDateToTable.py")])
 subprocess.run(["python", os.path.join("src", "database", "processingData", "handleMissingData.py")])
 
-# Run scripts to get Engineering data to the database
+# Run scripts to get Engineering Feature data and create the final dataset
 subprocess.run(["python", os.path.join("src", "addFeature", "addFeatureTable.py")])
+subprocess.run(["python", os.path.join("src", "addFeature", "createDataSet.py")])
