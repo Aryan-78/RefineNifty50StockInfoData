@@ -1,0 +1,12 @@
+# Auto detect text files and normalize line endings
+* text=auto
+
+# Python files
+*.py text diff=python
+
+# CSV data files
+*.csv text
+
+# Documentation
+*.md text diff=markdown
+LICENSE text
