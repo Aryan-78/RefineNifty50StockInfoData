@@ -26,3 +26,6 @@ subprocess.run(["python", os.path.join("src", "database", "processingData", "han
 # Run scripts to get Engineering Feature data and create the final dataset
 subprocess.run(["python", os.path.join("src", "addFeature", "addFeatureTable.py")])
 subprocess.run(["python", os.path.join("src", "addFeature", "createDataSet.py")])
+
+# Run script to create model
+subprocess.run(["python", os.path.join("src", "MachineLearning", "trainXGBoost.py")])
