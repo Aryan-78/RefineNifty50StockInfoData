@@ -4,8 +4,8 @@ import sys
 import os
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 from dataIngestion.addIndividualEquityInDatabase import get_all_symbols
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname((__file__))))))
 from helper.helper import get_logging, mainDB
 
 logger = get_logging(Path(__file__).stem)
