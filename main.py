@@ -1,6 +1,6 @@
 import subprocess
 import os
-from src.helper.helper import mainDB, LOG_FILE
+from helper.helper import mainDB, LOG_FILE
 
 # preCleanUp bring the folder into its initial state
 def preCleanUp():

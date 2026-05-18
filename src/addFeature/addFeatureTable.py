@@ -6,7 +6,7 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from database.dataIngestion.addIndividualEquityInDatabase import get_all_symbols
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname((__file__))))))
 from helper.enggFeatureInputHelper import (
     get3DayReturn, get10DayReturn, get14DayReturn, getMomentumRatio,
     get3daySlopOf10MovingAverage, get5daySlopOf20MovingAverage, getMovingAverageRatio, getPriceROC, getRSI14, getMACD, getSignalLine, getRange, getVolatility10, getTrueRangeMovingAverage, getTrueRangeMovingAverageRatio, getTrueRangeSpike,

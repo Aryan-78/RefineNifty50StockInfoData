@@ -6,7 +6,7 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from database.dataIngestion.addIndividualEquityInDatabase import get_all_symbols
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname((__file__))))))
 from helper.helper import mainDB, get_logging
 
 logger = get_logging(Path(__file__).stem)

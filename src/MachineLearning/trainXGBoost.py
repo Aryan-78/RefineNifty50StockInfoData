@@ -13,7 +13,7 @@ from sklearn.metrics import (
     confusion_matrix, classification_report, roc_auc_score
 )
 
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 from helper.helper import mainDB, get_logging
 
 logger = get_logging(Path(__file__).stem)
