@@ -4,6 +4,10 @@ import os
 import sys
 from pathlib import Path
 
+_ROOT = Path(__file__).resolve().parents[2]
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
 import numpy as np
 import pandas as pd
 from xgboost import XGBClassifier
@@ -13,7 +17,6 @@ from sklearn.metrics import (
     confusion_matrix, classification_report, roc_auc_score
 )
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 from helper.helper import mainDB, get_logging
 
 logger = get_logging(Path(__file__).stem)

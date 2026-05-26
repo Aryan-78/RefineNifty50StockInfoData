@@ -3,9 +3,11 @@ import sqlite3
 import sys
 import os
 
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-from dataIngestion.addIndividualEquityInDatabase import get_all_symbols
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname((__file__))))))
+_ROOT = Path(__file__).resolve().parents[3]
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
+from src.database.dataIngestion.addIndividualEquityInDatabase import get_all_symbols
 from helper.helper import get_logging, mainDB
 
 logger = get_logging(Path(__file__).stem)

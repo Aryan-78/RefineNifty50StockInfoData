@@ -3,9 +3,11 @@ import sqlite3
 import os
 import pandas as pd
 import sys
-import os
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname((__file__))))))
+_ROOT = Path(__file__).resolve().parents[3]
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
 from helper.helper import csv_root_path, get_logging, mainDB
 
 logger = get_logging(Path(__file__).stem)
