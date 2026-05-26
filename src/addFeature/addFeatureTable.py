@@ -4,9 +4,11 @@ import sys
 from pathlib import Path
 import os
 
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-from database.dataIngestion.addIndividualEquityInDatabase import get_all_symbols
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname((__file__))))))
+_ROOT = Path(__file__).resolve().parents[2]
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
+from src.database.dataIngestion.addIndividualEquityInDatabase import get_all_symbols
 from helper.enggFeatureInputHelper import (
     get3DayReturn, get10DayReturn, get14DayReturn, getMomentumRatio,
     get3daySlopOf10MovingAverage, get5daySlopOf20MovingAverage, getMovingAverageRatio, getPriceROC, getRSI14, getMACD, getSignalLine, getRange, getVolatility10, getTrueRangeMovingAverage, getTrueRangeMovingAverageRatio, getTrueRangeSpike,

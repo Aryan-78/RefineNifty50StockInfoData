@@ -1,6 +1,12 @@
 import subprocess
 import os
-from helper.helper import mainDB, LOG_FILE
+from helper import mainDB, LOG_FILE
+import sys
+
+# Add the project root to sys.path
+ROOT = os.path.dirname(os.path.abspath(__file__))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
 
 # preCleanUp bring the folder into its initial state
 def preCleanUp():
